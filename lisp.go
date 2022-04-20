@@ -15,8 +15,6 @@ type LispVal struct {
 	Value interface{}
 }
 
-type LispFunc func([]LispVal) LispVal
-
 var env map[string]LispVal
 
 func main() {
@@ -293,7 +291,7 @@ func eval(val LispVal, env map[string]LispVal) LispVal {
 				for _, arg := range val.Value.([]LispVal)[1:] {
 					args = append(args, eval(arg, env))
 				}
-				return env[val.Value.([]LispVal)[0].Value.(string)].Value.(LispFunc)(args)
+				return env[val.Value.([]LispVal)[0].Value.(string)].Value.(func([]LispVal) LispVal)(args)
 			}
 		} else {
 			var list []LispVal
