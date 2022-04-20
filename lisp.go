@@ -301,18 +301,20 @@ func eval(val LispVal, env map[string]LispVal) LispVal {
 					return eval(val.Value.([]LispVal)[2], newEnv)
 				}}
 			} else {
+				proc := eval(val.Value.([]LispVal)[0], env)
 				var args []LispVal
 				for _, arg := range val.Value.([]LispVal)[1:] {
 					args = append(args, eval(arg, env))
 				}
-				return env[val.Value.([]LispVal)[0].Value.(string)].Value.(func([]LispVal) LispVal)(args)
+				return proc.Value.(func([]LispVal) LispVal)(args)
 			}
 		} else {
-			var list []LispVal
-			for _, arg := range val.Value.([]LispVal) {
-				list = append(list, eval(arg, env))
+			proc := eval(val.Value.([]LispVal)[0], env)
+			var args []LispVal
+			for _, arg := range val.Value.([]LispVal)[1:] {
+				args = append(args, eval(arg, env))
 			}
-			return LispVal{"list", list}
+			return proc.Value.(func([]LispVal) LispVal)(args)
 		}
 	} else if val.Type == "func" {
 		return val
