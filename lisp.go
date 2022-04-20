@@ -257,7 +257,6 @@ func parseSymbol(text string) (LispVal, string) {
 	var sym string
 	for len(text) > 0 {
 		if text[0] == ' ' || text[0] == ')' {
-			text = text[1:]
 			break
 		}
 		sym += string(text[0])
