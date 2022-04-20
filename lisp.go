@@ -172,11 +172,16 @@ func main() {
 	for {
 		fmt.Print(">> ")
 		text, _ := reader.ReadString('\n')
-		fmt.Println(eval(parse(text), env))
+		fmt.Println(eval(read(text), env))
 	}
 }
 
-func parse(text string) LispVal {
+func read(text string) LispVal {
+	v, _ := parse(text)
+	return v
+}
+
+func parse(text string) (LispVal, string) {
 	text = strings.TrimSpace(text)
 	if text[0] == '(' {
 		return parseList(text)
@@ -191,7 +196,7 @@ func parse(text string) LispVal {
 	}
 }
 
-func parseList(text string) LispVal {
+func parseList(text string) (LispVal, string) {
 	text = text[1:]
 	var list []LispVal
 	for len(text) > 0 {
@@ -199,13 +204,14 @@ func parseList(text string) LispVal {
 			text = text[1:]
 			break
 		}
-		list = append(list, parse(text))
-		text = text[len(list[len(list)-1].Value.(string)):]
+		var elem LispVal
+		elem, text = parse(text)
+		list = append(list, elem)
 	}
-	return LispVal{"list", list}
+	return LispVal{"list", list}, text
 }
 
-func parseString(text string) LispVal {
+func parseString(text string) (LispVal, string) {
 	text = text[1:]
 	var str string
 	for len(text) > 0 {
@@ -216,16 +222,22 @@ func parseString(text string) LispVal {
 		str += string(text[0])
 		text = text[1:]
 	}
-	return LispVal{"string", str}
+	return LispVal{"string", str}, text
 }
 
-func parseQuote(text string) LispVal {
+func parseQuote(text string) (LispVal, string) {
 	text = text[1:]
-	return LispVal{"quote", parse(text)}
+	val, text := parse(text)
+	return LispVal{"quote", val}, text
 }
 
-func parseInt(text string) LispVal {
+func parseInt(text string) (LispVal, string) {
 	var num int
+	var neg bool
+	if text[0] == '-' {
+		neg = true
+		text = text[1:]
+	}
 	for len(text) > 0 {
 		if text[0] == ' ' {
 			text = text[1:]
@@ -235,10 +247,13 @@ func parseInt(text string) LispVal {
 		num += int(text[0] - '0')
 		text = text[1:]
 	}
-	return LispVal{"int", num}
+	if neg {
+		num = -num
+	}
+	return LispVal{"int", num}, text
 }
 
-func parseSymbol(text string) LispVal {
+func parseSymbol(text string) (LispVal, string) {
 	var sym string
 	for len(text) > 0 {
 		if text[0] == ' ' {
@@ -248,7 +263,7 @@ func parseSymbol(text string) LispVal {
 		sym += string(text[0])
 		text = text[1:]
 	}
-	return LispVal{"symbol", sym}
+	return LispVal{"symbol", sym}, text
 }
 
 func eval(val LispVal, env map[string]LispVal) LispVal {
