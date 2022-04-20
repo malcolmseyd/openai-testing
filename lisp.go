@@ -229,7 +229,7 @@ func parseString(text string) (LispVal, string) {
 func parseQuote(text string) (LispVal, string) {
 	text = text[1:]
 	val, text := parse(text)
-	return LispVal{"quote", val}, text
+	return LispVal{"list", []LispVal{{"symbol", "quote"}, val}}, text
 }
 
 func parseInt(text string) (LispVal, string) {
@@ -271,8 +271,6 @@ func eval(val LispVal, env map[string]LispVal) LispVal {
 	} else if val.Type == "string" {
 		return val
 	} else if val.Type == "bool" {
-		return val
-	} else if val.Type == "quote" {
 		return val
 	} else if val.Type == "symbol" {
 		return env[val.Value.(string)]
@@ -334,8 +332,6 @@ func (val LispVal) String() string {
 		} else {
 			return "false"
 		}
-	} else if val.Type == "quote" {
-		return "'" + val.Value.(LispVal).String()
 	} else if val.Type == "symbol" {
 		return val.Value.(string)
 	} else if val.Type == "list" {
