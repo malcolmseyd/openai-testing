@@ -63,56 +63,56 @@ func main() {
 	}}
 	env["="] = LispVal{"func", func(args []LispVal) LispVal {
 		var eq bool
+		var prev int
 		for i, arg := range args {
-			if i == 0 {
-				eq = arg.Value.(int)
-			} else {
-				eq = eq == arg.Value.(int)
+			if i != 0 {
+				eq = prev == arg.Value.(int)
 			}
+			prev = arg.Value.(int)
 		}
 		return LispVal{"bool", eq}
 	}}
 	env["<"] = LispVal{"func", func(args []LispVal) LispVal {
 		var lt bool
+		var prev int
 		for i, arg := range args {
-			if i == 0 {
-				lt = arg.Value.(int)
-			} else {
-				lt = lt < arg.Value.(int)
+			if i != 0 {
+				lt = prev < arg.Value.(int)
 			}
+			prev = arg.Value.(int)
 		}
 		return LispVal{"bool", lt}
 	}}
 	env[">"] = LispVal{"func", func(args []LispVal) LispVal {
 		var gt bool
+		var prev int
 		for i, arg := range args {
-			if i == 0 {
-				gt = arg.Value.(int)
-			} else {
-				gt = gt > arg.Value.(int)
+			if i != 0 {
+				gt = prev > arg.Value.(int)
 			}
+			prev = arg.Value.(int)
 		}
 		return LispVal{"bool", gt}
 	}}
 	env["<="] = LispVal{"func", func(args []LispVal) LispVal {
 		var lte bool
+		var prev int
 		for i, arg := range args {
-			if i == 0 {
-				lte = arg.Value.(int)
-			} else {
-				lte = lte <= arg.Value.(int)
+			if i != 0 {
+				lte = prev <= arg.Value.(int)
 			}
+			prev = arg.Value.(int)
 		}
 		return LispVal{"bool", lte}
 	}}
 	env[">="] = LispVal{"func", func(args []LispVal) LispVal {
 		var gte bool
+		var prev int
 		for i, arg := range args {
-			if i == 0 {
-				gte = arg.Value.(int)
-			} else {
-				gte = gte >= arg.Value.(int)
+			if i != 0 {
+				gte = prev >= arg.Value.(int)
 			}
+			prev = arg.Value.(int)
 		}
 		return LispVal{"bool", gte}
 	}}
