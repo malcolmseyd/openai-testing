@@ -200,6 +200,7 @@ func parseList(text string) (LispVal, string) {
 	text = text[1:]
 	var list []LispVal
 	for len(text) > 0 {
+		text = strings.TrimSpace(text)
 		if text[0] == ')' {
 			text = text[1:]
 			break
@@ -239,8 +240,7 @@ func parseInt(text string) (LispVal, string) {
 		text = text[1:]
 	}
 	for len(text) > 0 {
-		if text[0] == ' ' {
-			text = text[1:]
+		if text[0] < '0' || text[0] > '9' {
 			break
 		}
 		num *= 10
@@ -256,7 +256,7 @@ func parseInt(text string) (LispVal, string) {
 func parseSymbol(text string) (LispVal, string) {
 	var sym string
 	for len(text) > 0 {
-		if text[0] == ' ' {
+		if text[0] == ' ' || text[0] == ')' {
 			text = text[1:]
 			break
 		}
